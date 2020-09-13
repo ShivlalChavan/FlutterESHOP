@@ -83,8 +83,6 @@ class DatabaseHelper {
     int res = await dbQuery.update("Product", product.toMap(),where: " id = ?",whereArgs: <int>[product.id as int]);
 
     return res > 0 ? true : false ;
-
-
   }
 
 

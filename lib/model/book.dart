@@ -12,6 +12,7 @@ class Book {
  String image;
  double price;
  double ratings;
+ bool addedToCart;
 
 
  Book({
@@ -22,7 +23,8 @@ class Book {
        this.author,
        this.price,
        this.categoryId,
-       this.ratings
+       this.ratings,
+       this.addedToCart=false
  });
 
 

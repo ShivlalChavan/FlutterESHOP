@@ -7,6 +7,7 @@ import 'package:flutterstationaryshop/localization/language.dart';
 import 'package:flutterstationaryshop/localization/language_constant.dart';
 import 'package:flutterstationaryshop/screens/addnewbook.dart';
 import 'package:flutterstationaryshop/screens/demogrid.dart';
+import 'package:flutterstationaryshop/screens/usersettings.dart';
 import 'package:flutterstationaryshop/widget/booklist.dart';
 
 import '../main.dart';
@@ -36,38 +37,6 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      actions: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(8.0),
-          child: DropdownButton<Language>(
-            underline: SizedBox(),
-            icon: Icon(
-              Icons.language,
-              color: Colors.white,
-            ),
-            onChanged: (Language languae){
-              _changedLanguage(languae);
-            },
-            items: Language.languageList()
-                 .map<DropdownMenuItem<Language>>(
-                    (e) => DropdownMenuItem<Language>(
-                      value: e,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text(
-                            e.flag,
-                            style: TextStyle(fontSize: 30),
-                          ),
-                          Text(e.name)
-                        ],
-                      ),
-                    )).toList(),
-          ),
-        )
-      ],
-      ),
       body: SizedBox.expand(
         child: PageView(
           controller: _pageController,
@@ -79,7 +48,7 @@ class _DashboardState extends State<Dashboard> {
         children: <Widget>[
           BookList(),
           AddNewBook(),
-          Demo()
+          Settings()
         ],
         ),
       ),
@@ -124,7 +93,6 @@ class _DashboardState extends State<Dashboard> {
     var db = DatabaseHelper();
 
     List<CartProduct> list = await db.getProduct();
-
     print('GOT List - ${list[0].toMap()}');
 
   }

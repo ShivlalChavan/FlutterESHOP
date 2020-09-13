@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutterstationaryshop/model/ordermodel.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
@@ -119,16 +120,42 @@ class NetworkHelper {
        return data;
      }
 
-
-
-
    } catch (e) {
      print(e);
    }
+ }
+
+ Future<dynamic> saveOrder(List<Order> jsonModel) async  {
+
+   var bodyData = jsonEncode(jsonModel);
+   var value ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMTE1NzZkMDg1NzNkNGJkNDQ4MzQ0YSIsImlhdCI6MTU5NTA0NzY3MywiZXhwIjoxNjAyODIzNjczfQ.vDVasu1PRSamVojze3cw1zBQFH39E88AV2ZVBgzZqpc";
+
+   http.Response response = await http.post(
+       url,body: bodyData,
+       headers: {
+         "Content-Type": "application/json",
+         "Authorization": "Bearer $value"
+       });
+
+   if(response.statusCode == 201){
+
+     var resposedata = jsonDecode(response.body);
+
+     print('add book- $resposedata');
+
+     var bookdata = resposedata['data']['data'];
+
+     dynamic  data = bookdata;
+
+     return data;
 
 
-
+   }else if(response.statusCode == 500){
+     print('$response');
+   }
 
  }
+
+
 
 }

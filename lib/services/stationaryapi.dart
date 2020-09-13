@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutterstationaryshop/model/book.dart';
 import 'package:flutterstationaryshop/model/catergory.dart';
+import 'package:flutterstationaryshop/model/ordermodel.dart';
 import 'package:flutterstationaryshop/services/networking.dart';
 
 const BaseUrl = "http://192.168.15.207:3000/api/v1";
@@ -103,6 +104,28 @@ class Stationary {
     } catch (e) {
       print(e);
     }
+
+  }
+
+  Future<List<Order>> getSavedOrder(List<Order> bodyData) async{
+    List<Order> orderList = null;
+
+    NetworkHelper networkHelper = NetworkHelper('$BaseUrl/bookings');
+
+    List<dynamic> orderdata = await networkHelper.saveOrder(bodyData);
+    try {
+
+      if(orderdata!=null){
+
+        orderList = (orderdata).map((listItem) => Order.fromJson(listItem)).toList();
+        return orderList;
+
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return orderList;
 
   }
 

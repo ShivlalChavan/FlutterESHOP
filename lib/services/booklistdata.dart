@@ -44,6 +44,8 @@ class BookListData extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+
   Book getSingleBook() {
     if(bookData !=null){
       return bookData;
