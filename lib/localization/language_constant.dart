@@ -26,9 +26,9 @@ Future<Locale> getLocale() async {
     case ENGLISH:
       return Locale(ENGLISH,'US');
     case HINDI:
-      return Locale(HINDI,'IN');
+      return Locale(HINDI,"IN");
     case MARATHI:
-      return Locale(MARATHI,'IN');
+      return Locale(MARATHI,"IN");
     default :
       return Locale(ENGLISH,'US');
   }

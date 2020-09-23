@@ -6,7 +6,10 @@ import 'package:flutterstationaryshop/database/database_helper.dart';
 import 'package:flutterstationaryshop/database/productmodel.dart';
 import 'package:flutterstationaryshop/model/ordermodel.dart';
 import 'package:flutterstationaryshop/model/paymentMethod.dart';
+import 'package:flutterstationaryshop/screens/dashboard.dart';
+import 'package:flutterstationaryshop/services/stationaryapi.dart';
 import 'package:flutterstationaryshop/widget/checkboxtile.dart';
+import 'package:flutterstationaryshop/widget/simplealert.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 
@@ -19,6 +22,7 @@ class _CheckoutProductState extends State<CheckoutProduct> {
 
   static const platform = const MethodChannel("razorpay_flutter");
 
+
   Razorpay _razorpay;
 
   List<PaymentMethod> paymentMethodData =  List<PaymentMethod>();
@@ -30,21 +34,25 @@ class _CheckoutProductState extends State<CheckoutProduct> {
   double totalPrice= 0;
   bool _isLoading;
 
+  PaymentMethod paymentMethod = PaymentMethod();
+
 
 
   @override
   void initState() {
     super.initState();
 
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
     db = DatabaseHelper();
     getCartProduct();
 
     getPaymentTypeData();
 
-    _razorpay = Razorpay();
-    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
-    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
-    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
   }
 
   @override
@@ -61,7 +69,7 @@ class _CheckoutProductState extends State<CheckoutProduct> {
 
     await updateCartItems();
 
-    callApiForSaveOrder('pay_FLqXqs2PilXxZm');
+   // callApiForSaveOrder('pay_FLqXqs2PilXxZm');
 
 
   }
@@ -165,16 +173,9 @@ class _CheckoutProductState extends State<CheckoutProduct> {
              return CheckBoxTile(
                title: paymentMethodData[index].type,
                icon: paymentMethodData[index].icon,
-               onChanged: (bool value){
+               onChanged: (PaymentMethod value){
                  setState(() {
-
-                   if(value){
-                     paymentMethodData[index].isDone = value;
-
-                   }
-                   else {
-                     paymentMethodData[index].toggleDone();
-                   }
+                   paymentMethod = value;
                    //paymentMethodData[index].toggleDone();
                  });
 
@@ -197,6 +198,9 @@ class _CheckoutProductState extends State<CheckoutProduct> {
   }
 
   void _openCheckout() async {
+
+
+
     var options = {
       'key': 'rzp_test_zQf3REihIEWw0w',
       'amount': 2000,  // Money Should be in paise , if double convert to paise  and should be greater than 100
@@ -229,25 +233,77 @@ class _CheckoutProductState extends State<CheckoutProduct> {
   }
 
   void callApiForSaveOrder(String paymentId)  async{
-    isLoading = true;
+
+    Stationary stationary = Stationary();
 
     cartList.forEach((element) {
       Order order = Order(
-                  book: element.productname,
-                  price: element.price,
-                  user:'5f114ca49c136049089c6458',
-                  paid: 'true',
-                  paymentId: paymentId,
-                  itemCount: '1'
-                  );
+          book: element.productId,
+          price: element.price,
+          user:'5f114ca49c136049089c6458',
+          paid: 'true',
+          paymentId: paymentId,
+          itemCount: '1'
+      );
       orderList.add(order);
-
     });
 
     print(' Order lits: ${orderList[0].toJson()}');
 
+    setState(() {
+      _isLoading = true;
+    });
+
+
+    List<Order> resorderList = await stationary.getSavedOrder(orderList);
+    
+    var db = DatabaseHelper();
+    
+     var int = await db.deleteCartable();
+
+    print(' Order lits: ${orderList[0].toJson()}');
+
+    setState(() {
+      isLoading= false;
+    });
+
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text(
+              "ESHOP",
+              style: kbookTitle,
+            ),
+            content: Text(
+                "Order placed successfully.",
+              style: kbookTitle,
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                    "OK",
+                  style: kbookTitle,
+                ),
+                onPressed: (){
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
+                    return Dashboard();
+                  }),(Route<dynamic> route) => false);
+                },
+              )
+            ],
+
+          );
+        });
+
+
 
   }
+
+
 
    //TODO:Use this for converting decimal to paise .
  /* RegExp regex = RegExp(r"([.]*0)(?!.*\d)");

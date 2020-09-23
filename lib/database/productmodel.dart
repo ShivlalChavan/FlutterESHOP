@@ -1,6 +1,7 @@
 class CartProduct{
 
   String id;
+  String productId;
   String userId;
   String productname;
   String productAuthor;
@@ -8,10 +9,11 @@ class CartProduct{
   String price;
   String quantity;
 
-  CartProduct({this.userId,this.productname,this.productAuthor,this.productImage,this.price,this.quantity});
+  CartProduct({this.userId,this.productId,this.productname,this.productAuthor,this.productImage,this.price,this.quantity});
 
   CartProduct.map(dynamic obj) {
     this.userId = obj["userId"];
+    this.productId = obj['productid'];
     this.productname = obj["productname"];
     this.productAuthor = obj["productauthor"];
     this.productImage = obj["image"];
@@ -22,6 +24,7 @@ class CartProduct{
   Map<String, dynamic> toMap(){
     var map = Map<String,dynamic>();
     map["userId"] = this.userId;
+    map['productid']=this.productId;
     map["productname"] = productname;
     map["productauthor"] = productAuthor;
     map["image"] = productImage;

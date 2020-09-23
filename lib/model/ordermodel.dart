@@ -1,6 +1,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+
+
 @JsonSerializable()
 class Order {
 
@@ -24,6 +26,7 @@ class Order {
     this.id,
     this.v
   });
+
 
 
   factory Order.fromJson(Map<String,dynamic> parsedJson){

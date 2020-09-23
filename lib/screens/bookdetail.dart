@@ -78,7 +78,7 @@ class _BookDetailState extends State<BookDetail> {
 
     var db = DatabaseHelper();
 
-    CartProduct cartProduct = CartProduct(userId: "",productname: bookdata.title,
+    CartProduct cartProduct = CartProduct(userId: "",productId: bookdata.id,productname: bookdata.title,
                                   productAuthor: bookdata.author,productImage: bookdata.image,
                                   price:  bookdata.price.toString(),quantity: "1");
 

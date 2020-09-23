@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutterstationaryshop/model/book.dart';
 import 'package:flutterstationaryshop/model/catergory.dart';
+import 'package:flutterstationaryshop/model/myorder.dart';
 import 'package:flutterstationaryshop/model/ordermodel.dart';
 import 'package:flutterstationaryshop/services/networking.dart';
 
@@ -129,4 +130,26 @@ class Stationary {
 
   }
 
+  Future<List<MyOrder>>  getUserOrder(String userId) async {
+
+    List<MyOrder> userOrderData= null;
+
+    NetworkHelper networkHelper = NetworkHelper('$BaseUrl/bookings');
+
+    List<dynamic> orderdata = await networkHelper.getMyOrders(userId);
+
+    try{
+
+      if(orderdata!=null){
+
+        userOrderData = (orderdata).map((item) =>MyOrder.fromJson(item)).toList();
+
+        return userOrderData;
+      }
+    }catch(e){
+      print(e);
+    }
+
+
+   }
 }

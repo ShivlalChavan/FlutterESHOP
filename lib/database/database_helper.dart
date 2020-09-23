@@ -35,7 +35,7 @@ class DatabaseHelper {
 
   void _onCreate(Database db, int version) async {
     await db.execute(
-       "CREATE TABLE Product(id INTEGER PRIMARY KEY, userId TEXT, productname TEXT, productauthor TEXT, price TEXT, image TEXT, quantity TEXT)"
+       "CREATE TABLE Product(id INTEGER PRIMARY KEY, productId TEXT, userId TEXT, productname TEXT, productauthor TEXT, price TEXT, image TEXT, quantity TEXT)"
     );
   }
 
@@ -55,6 +55,7 @@ class DatabaseHelper {
       //var cart =  CartProduct(list[i]["userId"],list[i]["productname"],list[i]["productauthor"],list[i]["image"],list[i]["price"],list[i]["quantity"]);
       CartProduct cart = CartProduct();
       cart.userId = list[i]["userId"];
+      cart.productId = list[i]["productId"];
       cart.productname = list[i]["productname"];
       cart.productAuthor = list[i]["productauthor"];
       cart.productImage = list[i]["image"];
@@ -83,6 +84,14 @@ class DatabaseHelper {
     int res = await dbQuery.update("Product", product.toMap(),where: " id = ?",whereArgs: <int>[product.id as int]);
 
     return res > 0 ? true : false ;
+  }
+
+  Future<int> deleteCartable() async {
+    var dbclient = await db;
+
+    int res = await dbclient.delete("Product");
+    return res;
+
   }
 
 

@@ -93,7 +93,7 @@ class _DashboardState extends State<Dashboard> {
     var db = DatabaseHelper();
 
     List<CartProduct> list = await db.getProduct();
-    print('GOT List - ${list[0].toMap()}');
+   // print('GOT List - ${list[0].toMap()}');
 
   }
 

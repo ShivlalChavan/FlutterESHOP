@@ -128,6 +128,7 @@ class NetworkHelper {
  Future<dynamic> saveOrder(List<Order> jsonModel) async  {
 
    var bodyData = jsonEncode(jsonModel);
+   print('post order${bodyData}');
    var value ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMTE1NzZkMDg1NzNkNGJkNDQ4MzQ0YSIsImlhdCI6MTU5NTA0NzY3MywiZXhwIjoxNjAyODIzNjczfQ.vDVasu1PRSamVojze3cw1zBQFH39E88AV2ZVBgzZqpc";
 
    http.Response response = await http.post(
@@ -155,6 +156,37 @@ class NetworkHelper {
    }
 
  }
+
+
+ Future<dynamic>  getMyOrders(String userId) async {
+
+   var value ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMTE1NzZkMDg1NzNkNGJkNDQ4MzQ0YSIsImlhdCI6MTU5NTA0NzY3MywiZXhwIjoxNjAyODIzNjczfQ.vDVasu1PRSamVojze3cw1zBQFH39E88AV2ZVBgzZqpc";
+
+   http.Response response = await http.get(
+       url+"/"+userId,
+       headers: {
+         "Content-Type": "application/json",
+         "Authorization": "Bearer $value"
+       });
+
+   if(response.statusCode == 201){
+
+     var resposedata = jsonDecode(response.body);
+
+     print('orders- $resposedata');
+
+     var bookdata = await resposedata['data']['data'];
+
+     dynamic  data = bookdata;
+
+     return data;
+
+
+   }else if(response.statusCode == 401){
+     print('$response');
+   }
+ }
+
 
 
 
