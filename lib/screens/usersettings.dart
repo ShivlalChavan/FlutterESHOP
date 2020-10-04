@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutterstationaryshop/constant/constants.dart';
 import 'package:flutterstationaryshop/localization/language.dart';
 import 'package:flutterstationaryshop/localization/language_constant.dart';
+import 'package:flutterstationaryshop/screens/login.dart';
 import 'package:flutterstationaryshop/screens/myordersscreen.dart';
 import 'package:flutterstationaryshop/widget/settingtile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
@@ -140,8 +142,35 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
               ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 26.0),
+              child: Divider(
+                color: Colors.black45,
+                height: 1,
+                thickness: 0.5,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: ListTile(
+                title: Text(
+                  'Logout',
+                  style: kbookTitle,
+                ),
+                trailing: Container(
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.power_settings_new,
+                      color: Colors.redAccent,
+                    ),
+                    onPressed: (){
+                       _logoutUser();
+                    },
+                  ),
+                ),
+              ),
             )
-
           ],
         ),
       ),
@@ -151,5 +180,20 @@ class _SettingsState extends State<Settings> {
   void _changedLanguage(Language languae) async{
     Locale _locale = await setLocale(languae.langaugeCode);
     App.setLocale(context, _locale);
+  }
+
+  void _logoutUser() async {
+
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    pref.setString('authToken', null);
+    pref.setString('isLogin', null);
+    pref.setString('userEmail', null);
+    pref.setString('userData', null);
+
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context){
+      return LoginScreen();
+    }),(Route<dynamic> route) => false);
+
   }
 }

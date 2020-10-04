@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutterstationaryshop/constant/constants.dart';
+import 'package:flutterstationaryshop/database/database_helper.dart';
+import 'package:flutterstationaryshop/database/productmodel.dart';
 import 'package:flutterstationaryshop/model/book.dart';
 import 'package:flutterstationaryshop/screens/bookdetail.dart';
+import 'package:flutterstationaryshop/screens/cartscreen.dart';
 import 'package:flutterstationaryshop/services/booklistdata.dart';
 import 'package:flutterstationaryshop/services/stationaryapi.dart';
 import 'package:flutterstationaryshop/widget/booktile.dart';
@@ -17,8 +20,8 @@ class _BookListState extends State<BookList> {
 
   List<Book> bookListData;
   List<Book> filterBookList = [];
-
-  bool showSpinner = true;
+  List<CartProduct> _cartList;
+  bool showSpinner = true,isLoading;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -26,6 +29,22 @@ class _BookListState extends State<BookList> {
     super.initState();
 
     getBookList();
+    //getCartDetail();
+  }
+
+  void getCartDetail() async {
+
+  //  isLoading = true;
+
+    var db = DatabaseHelper();
+
+    List<CartProduct> cartList = await db.getProduct();
+
+    setState(() {
+      _cartList = cartList;
+      showSpinner = false;
+    });
+
   }
 
   void getBookList()  async {
@@ -35,8 +54,10 @@ class _BookListState extends State<BookList> {
 
      setState(() {
       bookListData = booklist;
-      showSpinner = false;
+     // showSpinner = false;
     });
+
+     getCartDetail();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<BookListData>(context ,listen:false).setBookList(bookListData);
@@ -67,14 +88,63 @@ class _BookListState extends State<BookList> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Colors.redAccent,
-          title: Text(
-            'Novel',
-            style:TextStyle(
-              color: Colors.white,
-              fontSize: 16.0,
-              fontWeight: FontWeight.w800
-          ) ,
+          title: Padding(
+            padding: EdgeInsets.only(right: 10.0),
+            child: Text(
+              'Novel',
+              style:TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w800
+              ) ,
+            ),
           ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 16.0, top: 2.0),
+                  child: GestureDetector(
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: <Widget>[
+                        Icon(
+                          Icons.shopping_cart,
+                          size: 32.0,
+                          color: Colors.white,
+                        ),
+                        if (_cartList.length > 0)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 2.0),
+                            child: CircleAvatar(
+                              radius: 8.0,
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                              child: Text(
+                                _cartList.length.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    onTap: () {
+                      if (_cartList.isNotEmpty)
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                              return CartScreen();
+                            }));
+                    },
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
         body: buildBody(),
         resizeToAvoidBottomPadding: true,
@@ -89,7 +159,7 @@ class _BookListState extends State<BookList> {
       children: <Widget>[
         SearchBox(),
         SizedBox(
-          height: 10.0,
+          height: 1.0,
         ),
         Expanded(
           child:filterBookList.length!=0 || controller.text.isNotEmpty
@@ -102,6 +172,7 @@ class _BookListState extends State<BookList> {
   //seacrh bar
   Widget SearchBox(){
     return Container(
+      height: 82,
       padding: EdgeInsets.all(5.0),
       color: Colors.white,
       child: Card(

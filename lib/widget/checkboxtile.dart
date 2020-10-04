@@ -10,10 +10,13 @@ class CheckBoxTile extends StatefulWidget {
    Function onChanged;
    bool isChecked = false;
    PaymentMethod paymentData;
+   String value;
+   String groupValue;
+   bool selectedValue;
 
 
 
-  CheckBoxTile({this.title,this.icon,this.onChanged,this.isChecked});
+  CheckBoxTile({this.title,this.icon,this.onChanged,this.isChecked,this.value,this.groupValue});
 
   @override
   _CheckBoxTileState createState() => _CheckBoxTileState();
@@ -27,13 +30,11 @@ class _CheckBoxTileState extends State<CheckBoxTile> {
   Widget build(BuildContext context) {
     return RadioListTile(
       title: Text(widget.title,style: kbookTitle,),
-      value:widget.paymentData.type,
+      value:widget.value,
       onChanged: widget.onChanged,
       secondary: widget.icon,
-      groupValue: widget.paymentData.type,
+      groupValue: widget.groupValue,
       activeColor: Colors.deepOrange,
-
-
     );
   }
 }

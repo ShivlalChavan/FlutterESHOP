@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterstationaryshop/constant/constants.dart';
 import 'package:flutterstationaryshop/database/database_helper.dart';
 import 'package:flutterstationaryshop/database/productmodel.dart';
+import 'package:flutterstationaryshop/model/loginresponsemodel.dart';
 import 'package:flutterstationaryshop/model/ordermodel.dart';
 import 'package:flutterstationaryshop/model/paymentMethod.dart';
 import 'package:flutterstationaryshop/screens/dashboard.dart';
@@ -11,6 +14,7 @@ import 'package:flutterstationaryshop/services/stationaryapi.dart';
 import 'package:flutterstationaryshop/widget/checkboxtile.dart';
 import 'package:flutterstationaryshop/widget/simplealert.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class CheckoutProduct extends StatefulWidget {
@@ -36,7 +40,8 @@ class _CheckoutProductState extends State<CheckoutProduct> {
 
   PaymentMethod paymentMethod = PaymentMethod();
 
-
+  String selectedPaymentType;
+  int curentPay=1;
 
   @override
   void initState() {
@@ -69,8 +74,16 @@ class _CheckoutProductState extends State<CheckoutProduct> {
 
     await updateCartItems();
 
-   // callApiForSaveOrder('pay_FLqXqs2PilXxZm');
+    SharedPreferences pref = await SharedPreferences.getInstance();
 
+    String userData = pref.get("userData");
+    Map data = jsonDecode(userData);
+    UserLogin userLogin = UserLogin.fromJson(data);
+
+    print('got user data- ${userLogin}');
+    print('got user map- ${data}');
+
+   // callApiForSaveOrder('pay_FLqXqs2PilXxZm');
 
   }
 
@@ -96,6 +109,7 @@ class _CheckoutProductState extends State<CheckoutProduct> {
    void getPaymentTypeData(){
 
      PaymentMethod cash = PaymentMethod(
+       isDone: false,
        type: 'Cash On Delivery',
        icon:Icon(
        Icons.motorcycle,
@@ -105,6 +119,7 @@ class _CheckoutProductState extends State<CheckoutProduct> {
      paymentMethodData.add(cash);
 
      PaymentMethod card = PaymentMethod(
+       isDone: false,
          type: 'Online Payment',
          icon:Icon(
            Icons.credit_card,
@@ -147,13 +162,18 @@ class _CheckoutProductState extends State<CheckoutProduct> {
         backgroundColor: Colors.redAccent,
         title: Text(
           'Payment',
-          style: kbookTitle,
+          style: kbookTitle.copyWith(color: Colors.white),
         ),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
+          Container(
+            height: 180,
+            width: 180,
+            child: Image.asset('images/logo.png',fit: BoxFit.fill,)
+          ),
           Container(
           height: 120,
           margin: EdgeInsets.all(8.0),
@@ -173,24 +193,41 @@ class _CheckoutProductState extends State<CheckoutProduct> {
              return CheckBoxTile(
                title: paymentMethodData[index].type,
                icon: paymentMethodData[index].icon,
-               onChanged: (PaymentMethod value){
+               onChanged: (String value){
                  setState(() {
-                   paymentMethod = value;
+                   selectedPaymentType = value;
                    //paymentMethodData[index].toggleDone();
+                   print('Selected type: $value');
                  });
-
                },
-              isChecked: paymentMethodData[index].isDone,
+              value: paymentMethodData[index].type,
+              groupValue:selectedPaymentType,
              );
-          },itemCount: paymentMethodData.length,) ,
+          },itemCount: paymentMethodData.length,),
           ),
-            RaisedButton(
-              onPressed: _openCheckout,
+        Padding(
+          padding: EdgeInsets.all(2.0),
+          child: Container(
+            color: Colors.white,
+            child: RaisedButton(
+              padding: EdgeInsets.symmetric(horizontal: 38.0, vertical: 10.0),
+              color: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              onPressed: () {
+                _openCheckout();
+              },
               child: Text(
                 'Place Order',
-                style: kbookTitle,
+                style: kbookTitle.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold
+                ),
               ),
-            )
+            ),
+          ),
+         ),
           ],
         ),
       ),
@@ -198,25 +235,37 @@ class _CheckoutProductState extends State<CheckoutProduct> {
   }
 
   void _openCheckout() async {
+    if (selectedPaymentType == 'Online Payment')
+      {
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        
+        String userData = pref.get("userData");
+        Map data = jsonDecode(userData);
+        UserLogin userLogin = UserLogin.fromJson(data);
+        
+        int totalPaisa = convertdecimalToPaisa(totalPrice);
 
+      var options = {
+        'key': 'rzp_test_zQf3REihIEWw0w',
+        'amount': totalPaisa,
+        // Money Should be in paise , if double convert to paise  and should be greater than 100
+        'name': 'Two States',
+        'description': 'Novel Book',
+        'prefill': {'contact': userLogin.mobile.toString(), 'email': userLogin.email},
+      };
 
-
-    var options = {
-      'key': 'rzp_test_zQf3REihIEWw0w',
-      'amount': 2000,  // Money Should be in paise , if double convert to paise  and should be greater than 100
-       'name': 'Two States',
-       'description':'Novel Book',
-       'prefill': {'contact': '9012345678','email': 'test@gmail.com'},
-    };
-
-    try{
+    try {
       _razorpay.open(options);
-
-    }catch (e){
+    } catch (e) {
       print('exception $e');
+    }
+  }else if(selectedPaymentType == 'Cash On Delivery'){
+
     }
 
   }
+
+
 
   _handlePaymentSuccess(PaymentSuccessResponse response) {
     print('Success ${response.paymentId}');
@@ -295,7 +344,6 @@ class _CheckoutProductState extends State<CheckoutProduct> {
                 },
               )
             ],
-
           );
         });
 
@@ -306,11 +354,17 @@ class _CheckoutProductState extends State<CheckoutProduct> {
 
 
    //TODO:Use this for converting decimal to paise .
- /* RegExp regex = RegExp(r"([.]*0)(?!.*\d)");
- double money = totalPrice;
+  int  convertdecimalToPaisa(double totalPrice){
+
+    RegExp regex = RegExp(r"([.]*0)(?!.*\d)");
+    double money = totalPrice;
     double tMoney = money*100;
     String stringMoney = tMoney.toString().replaceAll(regex, '');
-    int totalMoney = int.parse(stringMoney);*/
+    int totalMoney = int.parse(stringMoney);
+
+    return totalMoney;
+  }
+
 
 
 }

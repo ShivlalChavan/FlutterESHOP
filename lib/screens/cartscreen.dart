@@ -128,7 +128,7 @@ class _CartScreenState extends State<CartScreen> {
                              }));
                            },
                            child: Text(
-                             'Place Order',
+                             'Checkout',
                              style: kbookTitle.copyWith(
                                  color: Colors.white,
                                  fontWeight: FontWeight.bold

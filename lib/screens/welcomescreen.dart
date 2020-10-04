@@ -70,11 +70,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
        break;
 
       case AuthStatus.NOT_LOGGED_IN:
-        return  Dashboard();
+        return  LoginScreen();    // Dashboard();
         break;
 
       case AuthStatus.LOGGED_IN:
-        return DashboardScreen();
+        return Dashboard();
         break;
     }
   }

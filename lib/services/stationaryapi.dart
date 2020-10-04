@@ -3,7 +3,11 @@ import 'package:flutterstationaryshop/model/book.dart';
 import 'package:flutterstationaryshop/model/catergory.dart';
 import 'package:flutterstationaryshop/model/myorder.dart';
 import 'package:flutterstationaryshop/model/ordermodel.dart';
+import 'package:flutterstationaryshop/model/registerrequest.dart';
 import 'package:flutterstationaryshop/services/networking.dart';
+import 'package:flutterstationaryshop/model/loginrequestmodel.dart';
+import 'package:flutterstationaryshop/model/loginresponsemodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const BaseUrl = "http://192.168.15.207:3000/api/v1";
 
@@ -150,6 +154,63 @@ class Stationary {
       print(e);
     }
 
+   }
+
+
+   Future<UserBase> userLogin(LoginReq req) async {
+
+    NetworkHelper networkHelper = NetworkHelper('$BaseUrl/users/login');
+
+    var reqPojo = req.toJson();
+
+    dynamic userData = await networkHelper.loginUser(reqPojo);
+
+    UserBase  userLogin ;
+
+    try{
+
+      if(userData!=null) {
+
+    //   userLogin = userData as UserBase;
+        userLogin = UserBase.fromJson(userData);
+
+        return userLogin;
+
+      }
+
+    }catch(e){
+      print('login exception- $e');
+    }
 
    }
+
+
+
+  Future<UserBase> userRegister(RegisterRequest req) async {
+
+    NetworkHelper networkHelper = NetworkHelper('$BaseUrl/users/signup');
+
+    var reqPojo = req.toJson();
+
+    dynamic userData = await networkHelper.registerUser(reqPojo);
+
+    UserBase  userLogin ;
+
+    try{
+
+      if(userData!=null) {
+
+        //   userLogin = userData as UserBase;
+        userLogin = UserBase.fromJson(userData);
+
+        return userLogin;
+
+      }
+
+    }catch(e){
+      print('register exception- $e');
+    }
+
+  }
+
 }

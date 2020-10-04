@@ -4,16 +4,16 @@ import 'package:flutterstationaryshop/constant/constants.dart';
 import 'package:flutterstationaryshop/model/catergory.dart';
 
 
-class DropDown extends StatelessWidget {
+class DropDownRole extends StatelessWidget {
 
   String title;
   String hintText;
-  Category value;
-  List<DropdownMenuItem<Category>> onSaved;
+  String value;
+  List<DropdownMenuItem<String>> onSaved;
   Function onChanged;
-  List<Category> category;
+  List<String> category;
 
-  DropDown({this.title,this.hintText,this.value,this.category,this.onChanged,this.onSaved});
+  DropDownRole({this.title,this.hintText,this.value,this.category,this.onChanged,this.onSaved});
 
   @override
   Widget build(BuildContext context) {

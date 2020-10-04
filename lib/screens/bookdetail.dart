@@ -264,51 +264,54 @@ class _BookDetailState extends State<BookDetail> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 10.0),
-                    child: RaisedButton(
-                      padding: EdgeInsets.symmetric(horizontal: 38.0, vertical: 10.0),
-                      color: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      onPressed: () {
-                        print('clicked btn');
-                      },
-                      child: Text(
-                        'Buy Now',
-                        style: kbookTitle.copyWith(
-                          color: Colors.white
+              Container(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 0.0,horizontal: 10.0),
+                      child: RaisedButton(
+                        padding: EdgeInsets.symmetric(horizontal: 38.0, vertical: 10.0),
+                        color: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0,right: 10.0),
-                    child: RaisedButton(
-                      padding: EdgeInsets.symmetric(horizontal: 38.0, vertical: 10.0),
-                      color: Colors.redAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      onPressed: () {
-                        print('clicked btn');
-                        if(bookdata.addedToCart==false){
-                          addToCart();
-                        }
-                      },
-                      child: Text(
-                        cartStatus==false ? 'Add To Cart':'Added',
-                        style:  kbookTitle.copyWith(
+                        onPressed: () {
+                          print('clicked btn');
+                        },
+                        child: Text(
+                          'Buy Now',
+                          style: kbookTitle.copyWith(
                             color: Colors.white
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0,right: 10.0),
+                      child: RaisedButton(
+                        padding: EdgeInsets.symmetric(horizontal: 38.0, vertical: 10.0),
+                        color: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        onPressed: () {
+                          print('clicked btn');
+                          if(bookdata.addedToCart==false){
+                            addToCart();
+                          }
+                        },
+                        child: Text(
+                          cartStatus==false ? 'Add To Cart':'Added',
+                          style:  kbookTitle.copyWith(
+                              color: Colors.white
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               )
             ],
           ),

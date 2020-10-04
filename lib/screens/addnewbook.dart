@@ -23,11 +23,16 @@ class _AddNewBookState extends State<AddNewBook>  {
   Category categoryValue;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading;
+  int _currentIndex= 0 ;
+  PageController _pageController;
+
+
 
   @override
   void initState() {
     super.initState();
 
+    _pageController = PageController();
     getCategoryList();
 
   }
@@ -52,6 +57,9 @@ class _AddNewBookState extends State<AddNewBook>  {
     }
 
   }
+
+
+
 
 
   Widget showCircularProgress(){

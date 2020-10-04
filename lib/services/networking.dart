@@ -188,6 +188,68 @@ class NetworkHelper {
  }
 
 
+  Future<dynamic> loginUser(Map<String,dynamic> jsonModel) async {
+
+    var bodyData = jsonEncode(jsonModel);
+
+    http.Response response = await http.post(
+        url,body: bodyData,
+        headers: {
+          "Content-Type": "application/json"
+        });
+
+    if(response.statusCode == 200){
+
+      var resposedata = jsonDecode(response.body);
+
+      print('UserLogin- $resposedata');
+
+      dynamic data = resposedata;
+
+      return data;
+
+    }
+    else if(response.statusCode == 401) {
+      var resposedata = 'Invalid email or password';
+
+      dynamic data = resposedata;
+      return data;
+    }
+
+
+  }
+
+
+  Future<dynamic> registerUser(Map<String,dynamic> jsonModel) async {
+
+    var bodyData = jsonEncode(jsonModel);
+
+    http.Response response = await http.post(
+        url,body: bodyData,
+        headers: {
+          "Content-Type": "application/json"
+        });
+
+    if(response.statusCode == 201){
+
+      var resposedata = jsonDecode(response.body);
+
+      print('UserRegister- $resposedata');
+
+      dynamic data = resposedata;
+
+      return data;
+
+    }
+    else if(response.statusCode == 401) {
+      var resposedata = 'Invalid email or password';
+
+      dynamic data = resposedata;
+      return data;
+    }
+
+
+  }
 
 
 }

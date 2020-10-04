@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 
 
-
 const kTypeInputDecoration = InputDecoration(
    hintText:'Enter your value',
    hintStyle: TextStyle(
